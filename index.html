@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Ticket Maker 3.2</title>
+<title>Ticket Maker</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@ body {
 input {
     width: 90%;
     padding: 8px;
-    margin: 8px 0;
+    margin: 6px 0;
     border-radius: 5px;
     border: none;
 }
@@ -35,6 +35,158 @@ button {
     border-radius: 5px;
     background: #ff4d6d;
     color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #ff1f4b;
+}
+
+.ticket {
+    margin-top: 20px;
+    background: #2f2f50;
+    color: white;
+    border-radius: 15px;
+    padding: 15px;
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.delete-btn {
+    background: #444;
+}
+
+.delete-btn:hover {
+    background: #222;
+}
+
+.saved-section {
+    margin-top: 40px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Ticket Maker</h1>
+
+<div class="container">
+    <input type="email" id="email" placeholder="Email">
+  
+    <input type="tel" id="phone" placeholder="Phone Number">    <input type="text" id="name" placeholder="Your Name">
+
+    <input type="text" id="seat" placeholder="Seat Number">
+
+    <input type="date" id="date"
+
+    <input type="tel" id="phone" placeholder="Phone Number">
+
+    <br>
+    <button onclick="generateTicket()">Generate</button>
+    <button onclick="saveTicket()">Save Ticket</button>
+</div>
+
+<div id="ticketArea"></div>
+
+<div class="saved-section">
+    <h2>💾 Saved Tickets</h2>
+    <button class="delete-btn" onclick="deleteAllTickets()">Delete All</button>
+    <div id="savedTickets"></div>
+</div>
+
+<script>
+let currentTicket = null;
+
+function generateTicket() {
+  const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const name = document.getElementById("name").value;
+    const seat = document.getElementById("seat").value;
+    const date = document.getElementById("date").value;
+ 
+    
+
+    if (!name || !seat || !date || !email || !phone) {
+        alert("Fill in all fields!");
+        return;
+    }
+
+    const ticketID = "TKT-" + Math.floor(100000 + Math.random() * 900000);
+
+    currentTicket = { id: ticketID, name, seat, date, email, phone };
+
+    displayTicket(currentTicket);
+}
+
+function displayTicket(ticket) {
+    document.getElementById("ticketArea").innerHTML = `
+        <div class="ticket">
+            <h2>🎫 Ticket</h2>
+            <p><strong>Email:</strong> ${ticket.email}</p>
+            <p><strong>Phone:</strong> ${ticket.phone}</p>
+            <p><strong>tkt:</strong> ${ticket.id}</p>
+            <p><strong>Name:</strong> ${ticket.name}</p>
+            <p><strong>Seat:</strong> ${ticket.seat}</p>
+            <p><strong>Date:</strong> ${ticket.date}</p>
+           
+        </div>
+    `;
+}
+
+function saveTicket() {
+    if (!currentTicket) {
+        alert("Generate a ticket first!");
+        return;
+    }
+
+    let tickets = JSON.parse(localStorage.getItem("tickets")) || [];
+    tickets.push(currentTicket);
+    localStorage.setItem("tickets", JSON.stringify(tickets));
+
+    loadSavedTickets();
+}
+
+function deleteTicket(index) {
+    let tickets = JSON.parse(localStorage.getItem("tickets")) || [];
+    tickets.splice(index, 1);
+    localStorage.setItem("tickets", JSON.stringify(tickets));
+    loadSavedTickets();
+}
+
+function deleteAllTickets() {
+    if (confirm("Delete ALL tickets?")) {
+        localStorage.removeItem("tickets");
+        loadSavedTickets();
+    }
+}
+
+function loadSavedTickets() {
+    const savedDiv = document.getElementById("savedTickets");
+    let tickets = JSON.parse(localStorage.getItem("tickets")) || [];
+
+    savedDiv.innerHTML = "";
+
+    tickets.forEach((ticket, index) => {
+        savedDiv.innerHTML += `
+            <div class="ticket">
+                <p>ID: ${ticket.id}</p>
+                <p>Name: ${ticket.name}</p>
+                <p>Seat: ${ticket.seat}</p>
+                <p>Date: ${ticket.date}</p>
+                <p>Email: ${ticket.email}</p>
+                <p>Phone: ${ticket.phone}</p>
+                <button class="delete-btn" onclick="deleteTicket(${index})">Delete</button>
+            </div>
+        `;
+    });
+}
+
+window.onload = loadSavedTickets;
+</script>
+
+</body>
+</html>    color: white;
     cursor: pointer;
 }
 
